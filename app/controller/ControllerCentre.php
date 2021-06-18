@@ -4,6 +4,7 @@
 require_once '../model/ModelCentre.php';
 require_once '../model/ModelVaccin.php';
 
+
 class ControllerCentre {
 
  public static function centreReadAll() {
@@ -15,11 +16,22 @@ class ControllerCentre {
   require ($vue);
  }
 
+ public static function centreNbreRdv() {
+  $results = ModelCentre::getRdvCentres();
+  // ----- Construction chemin de la vue
+  include 'config.php';
+  $vue = $root . '/app/view/dashboard/viewNbreRdvCentre.php';
+  if (DEBUG)
+   echo ("ControllerCentre : vinReadAll : vue = $vue");
+  require ($vue);
+ }
+
  public static function centreCreate() {
   include 'config.php';
   $vue = $root . '/app/view/centre/viewInsert.php';
   require ($vue);
  }
+
 
  public static function centreCreated() {
   $results = ModelCentre::insert(

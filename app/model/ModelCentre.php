@@ -113,6 +113,22 @@ class ModelCentre {
    return NULL;
   }
  }
+
+ public static function getRdvCentres() {
+  try{
+      $database = Model::getInstance();
+      $query = "SELECT centre.label, count(centre_id) FROM `rendezvous`,`centre` WHERE centre_id=centre.id group by centre_id";
+      $results = array();
+      $selectRecolte = $database->query($query);
+      while($tuple = $selectRecolte->fetch()){
+         array_push($results,$tuple);
+      }
+      return $results;
+  }catch(PDOException $e){
+      printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+      return NULL;  
+  }
+}
  
   public static function getCentreDisp($id) {
   try {

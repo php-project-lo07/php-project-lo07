@@ -35,6 +35,7 @@ switch ($action) {
  case "centreReadOne":
  case "centreUpdateStock":
  case "centreNbreVacciné":
+ case "centreNbreRdv":
   ControllerCentre::$action();
   break;
   case "patientReadAll" :
