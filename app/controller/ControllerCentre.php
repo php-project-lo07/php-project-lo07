@@ -2,6 +2,7 @@
 <!-- ----- debut ControllerCentre-->
 <?php
 require_once '../model/ModelCentre.php';
+require_once '../model/ModelVaccin.php';
 
 class ControllerCentre {
 
@@ -29,7 +30,39 @@ class ControllerCentre {
   $vue = $root . '/app/view/centre/viewInserted.php';
   require ($vue);
  }
+ 
+  // Affiche un formulaire pour sélectionner un id qui existe
+ public static function centreReadId() {
+  $results = ModelCentre::getAllId();
 
+  // ----- Construction chemin de la vue
+  include 'config.php';
+  $vue = $root . '/app/view/centre/viewId.php';
+  require ($vue);
+ }
+ public static function centreReadOne() {
+  $results = ModelVaccin::getAll();
+
+  // ----- Construction chemin de la vue
+  include 'config.php';
+  $vue = $root . '/app/view/centre/viewUpdateStock.php';
+  require ($vue);
+ }
+ 
+  public static function centreUpdateStock() {
+  $results = ModelCentre::verifStockVaccin($_GET['centre'], $_GET['vaccin']);
+  if($results)
+      if(!empty($_GET['nbreDose']))
+        ModelCentre::updateStockVaccin($_GET['centre'], $_GET['vaccin'], $_GET['nbreDose']);
+      else
+         echo("gar je ne peu pas update");    
+  else
+      if(!empty($_GET['nbreDose']))
+        ModelCentre::addStockVaccin($_GET['centre'], $_GET['vaccin'], $_GET['nbreDose']);
+      else
+         echo("gar je ne peu pas update");   
+    ControllerCentre ::centreReadId();
+ }
 }
 ?>
 <!-- ----- fin ControllerCentre -->

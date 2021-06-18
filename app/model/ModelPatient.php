@@ -3,6 +3,8 @@
 
 <?php
 require_once 'Model.php';
+require_once 'ModelCentre.php';
+require_once 'ModelVaccin.php';
 
 class ModelPatient{
  private $id, $nom, $prenom, $adresse;
@@ -54,10 +56,10 @@ class ModelPatient{
  public static function getAllId() {
   try {
    $database = Model::getInstance();
-   $query = "select id from patient";
+   $query = "select id,nom, prenom from patient";
    $statement = $database->prepare($query);
    $statement->execute();
-   $results = $statement->fetchAll(PDO::FETCH_COLUMN, 0);
+   $results = $statement->fetchAll(PDO::FETCH_CLASS, "ModelPatient");
    return $results;
   } catch (PDOException $e) {
    printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
@@ -108,6 +110,61 @@ class ModelPatient{
   }
  }
 
+  public static function getMedicalFolder($id) {
+  try {
+   $database = Model::getInstance();
+   $query = "select * from rendezvous where patient_id = :id";
+   $statement = $database->prepare($query);
+   $statement->execute([
+     'id' => $id
+   ]);
+   $results = $statement->fetchAll();
+   return $results;
+  } catch (PDOException $e) {
+   printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+   return NULL;
+  }
+ }
+  public static function verifInjectionPatient($patient_id){
+     try {
+        $database = Model::getInstance();
+     
+        // ajout d'un nouveau tuple;
+        $query = "SELECT EXISTS (SELECT * FROM `rendezvous` WHERE patient_id= :patient) AS verif";
+        $statement = $database->prepare($query);
+        $statement->execute([
+          'patient' => $patient_id
+        ]);
+        $results = $statement->fetch(PDO::FETCH_ASSOC);
+        return $results["verif"];
+    } catch (PDOException $e) {
+        printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+        return NULL;
+    } 
+ }
+   public static function verifVaccinationAvailable($patient_id){
+     try {
+        $database = Model::getInstance();
+        $firstDose = ModelVaccin::getFirstVaccin($patient_id);
+        foreach($firstDose as $elt){
+            $doseMax= ModelVaccin::getMaxDose($elt->getId()); break;
+        }
+        // ajout d'un nouveau tuple;
+        $query = "select max(injection) maxInjection from rendezvous where patient_id=:patient";
+        $statement = $database->prepare($query);
+        $statement->execute([
+          'patient' => $patient_id
+        ]);
+        $results = $statement->fetch(PDO::FETCH_ASSOC);
+        if($results['maxInjection']==$doseMax['doses'])
+            return 1;
+        elseif ($results['maxInjection']<$doseMax['doses']) 
+            return 0;
+    } catch (PDOException $e) {
+        printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+        return NULL;
+    } 
+ }
  public static function insert($nom, $prenom, $adresse) {
   try {
    $database = Model::getInstance();
@@ -134,7 +191,30 @@ class ModelPatient{
    return -1;
   }
  }
-
+ 
+ public static function insertRDVPatient($centre, $vaccin, $patient) {
+  try {
+   $database = Model::getInstance();
+   $nbreInjection=ModelCentre::getMaxInjection($patient); 
+   if($nbreInjection['injection']==0)
+       $dose=1;
+   else{
+       $dose=$nbreInjection['injection']+1;
+   }
+   $query = "insert into rendezvous value (:centre_id, :patient_id, :injection, :vaccin_id)";
+   $statement = $database->prepare($query);
+   $statement->execute([
+     'centre_id' => $centre,
+     'patient_id' => $patient,
+     'injection' => $dose,
+     'vaccin_id' => $vaccin
+   ]);
+   return 0;
+  } catch (PDOException $e) {
+   printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+   return -1;
+  }
+ }
 //  public static function update($id,$doses) {
 //     try {
 //         $database = Model::getInstance();

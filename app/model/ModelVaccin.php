@@ -98,7 +98,51 @@ class ModelVaccin {
    return NULL;
   }
  }
-
+  public static function getMaxDose($id) {
+  try {
+   $database = Model::getInstance();
+   $query = "select doses from vaccin where id = :id";
+   $statement = $database->prepare($query);
+   $statement->execute([
+     'id' => $id
+   ]);
+   $results = $statement->fetch();
+   return $results;
+  } catch (PDOException $e) {
+   printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+   return NULL;
+  }
+ }
+  public static function getVaccinMaxNbreDose($id) {
+  try {
+   $database = Model::getInstance();
+   $query = "select id,label from `vaccin` where id in (select vaccin_id from `stock` where centre_id= :centre and quantite in (select max(quantite) from `stock` where centre_id= :centre))";
+   $statement = $database->prepare($query);
+   $statement->execute([
+     'centre' => $id
+   ]);
+   $results = $statement->fetchAll(PDO::FETCH_CLASS, "ModelVaccin");
+   return $results;
+  } catch (PDOException $e) {
+   printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+   return NULL;
+  }
+ }
+   public static function getFirstVaccin($id) {
+  try {
+   $database = Model::getInstance();
+   $query = "select id,label from `vaccin` where id in (select vaccin_id from `rendezvous` where patient_id= :patient and injection=1)";
+   $statement = $database->prepare($query);
+   $statement->execute([
+     'patient' => $id
+   ]);
+   $results = $statement->fetchAll(PDO::FETCH_CLASS, "ModelVaccin");
+   return $results;
+  } catch (PDOException $e) {
+   printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+   return NULL;
+  }
+ }
  public static function insert($label, $doses) {
   try {
    $database = Model::getInstance();

@@ -25,16 +25,23 @@ switch ($action) {
  case "vaccinCreated" :
  case "vaccinUpdate" :
  case "vaccinUpdated" :
+ case "vaccinValidate";
   ControllerVaccin::$action();
   break;
  case "centreReadAll" :
  case "centreCreate" :
  case "centreCreated" :
+ case "centreReadId":
+ case "centreReadOne":
+ case "centreUpdateStock":
   ControllerCentre::$action();
   break;
   case "patientReadAll" :
   case "patientCreate" :
   case "patientCreated" :
+  case "patientReadId":
+  case "patientCentreDispo":
+  case "patientvaccinArecevoir":
   ControllerPatient::$action();
   break;
   case "centreVaccinReadAll" :
