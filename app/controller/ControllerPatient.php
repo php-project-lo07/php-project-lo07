@@ -58,6 +58,13 @@ public static function patientDossierMedical($id) {
     require ($vue);
  }
  
+ public static function patientVacciné() {
+    $results = ModelPatient::getPatientVacciné();
+    include 'config.php';
+    $vue = $root . '/app/view/patient/viewAll.php';
+    require ($vue);
+ }
+ 
   public static function patientvaccinArecevoir() {
   $verif = ModelPatient::verifInjectionPatient($_GET['patient']);
   if($verif)

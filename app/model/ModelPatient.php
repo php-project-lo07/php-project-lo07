@@ -111,19 +111,19 @@ class ModelPatient{
  }
 
   public static function getMedicalFolder($id) {
-  try {
-   $database = Model::getInstance();
-   $query = "select * from rendezvous where patient_id = :id";
-   $statement = $database->prepare($query);
-   $statement->execute([
-     'id' => $id
-   ]);
-   $results = $statement->fetchAll();
-   return $results;
-  } catch (PDOException $e) {
-   printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
-   return NULL;
-  }
+    try{
+        $database = Model::getInstance();
+        $query = "select centre.label as label_centre, vaccin.label as label_vaccin, rendezvous.injection as injection from centre,rendezvous,vaccin where patient_id = 1 and centre.id=rendezvous.centre_id and vaccin.id=rendezvous.vaccin_id;";
+        $results = array();
+        $select = $database->query($query);
+        while($tuple = $select->fetch()){
+           array_push($results,$tuple);
+        }
+        return $results;
+    }catch(PDOException $e){
+        printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+        return NULL;  
+    }
  }
   public static function verifInjectionPatient($patient_id){
      try {
@@ -215,27 +215,19 @@ class ModelPatient{
    return -1;
   }
  }
-//  public static function update($id,$doses) {
-//     try {
-//         $database = Model::getInstance();
-     
-//         // ajout d'un nouveau tuple;
-//         $query = "update patient set doses = :doses where id = :id";
-//         $statement = $database->prepare($query);
-//         $statement->execute([
-//           'id' => $id,
-//           'doses' => $doses
-//         ]);
-//         return $id;
-//     } catch (PDOException $e) {
-//         printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
-//         return -1;
-//     }
-//  }
 
- public static function delete() {
-  echo ("ModelVin : delete() TODO ....");
-  return null;
+ public static function getPatientVacciné() {
+  try {
+   $database = Model::getInstance();
+   $query = "select * from patient where id in (select distinct patient_id from rendezvous)";
+   $statement = $database->prepare($query);
+   $statement->execute();
+   $results = $statement->fetchAll(PDO::FETCH_CLASS, "ModelPatient");
+   return $results;
+  } catch (PDOException $e) {
+   printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+   return NULL;
+  }
  }
 
 }

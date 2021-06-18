@@ -82,7 +82,22 @@ class ModelCentre {
    return NULL;
   }
  }
-
+ public static function getVaccinéParCentre() {
+    try{
+        $database = Model::getInstance();
+        $query = "select centre.label as label_centre, count(distinct rendezvous.patient_id) as nombre from `centre`,`rendezvous` where centre.id=rendezvous.centre_id group by rendezvous.centre_id;";
+        $results = array();
+        $select = $database->query($query);
+        while($tuple = $select->fetch()){
+           array_push($results,$tuple);
+        }
+        return $results;
+    }catch(PDOException $e){
+        printf("%s - %s<p/>\n", $e->getCode(), $e->getMessage());
+        return NULL;  
+    }
+ }
+ 
  public static function getOne($id) {
   try {
    $database = Model::getInstance();
@@ -98,6 +113,7 @@ class ModelCentre {
    return NULL;
   }
  }
+ 
   public static function getCentreDisp($id) {
   try {
     $database = Model::getInstance();

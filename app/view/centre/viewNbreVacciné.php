@@ -15,8 +15,7 @@ require ($root . '/app/view/fragment/fragmentCovidHeader.html');
       <thead>
         <tr>
           <th scope = "col">label_centre</th>
-          <th scope = "col">label_vaccin</th>
-          <th scope = "col">injection</th>
+          <th scope = "col">nombre de vacciné</th>
         </tr>
       </thead>
       <tbody>

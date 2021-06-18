@@ -49,18 +49,27 @@ class ControllerCentre {
   require ($vue);
  }
  
+  public static function centreNbreVacciné() {
+  $results = ModelCentre::getVaccinéParCentre();
+
+  // ----- Construction chemin de la vue
+  include 'config.php';
+  $vue = $root . '/app/view/centre/viewNbreVacciné.php';
+  require ($vue);
+ }
+ 
   public static function centreUpdateStock() {
   $results = ModelCentre::verifStockVaccin($_GET['centre'], $_GET['vaccin']);
   if($results)
       if(!empty($_GET['nbreDose']))
         ModelCentre::updateStockVaccin($_GET['centre'], $_GET['vaccin'], $_GET['nbreDose']);
       else
-         echo("gar je ne peu pas update");    
+         echo("Erreur");    
   else
       if(!empty($_GET['nbreDose']))
         ModelCentre::addStockVaccin($_GET['centre'], $_GET['vaccin'], $_GET['nbreDose']);
       else
-         echo("gar je ne peu pas update");   
+         echo("Erreur");   
     ControllerCentre ::centreReadId();
  }
 }

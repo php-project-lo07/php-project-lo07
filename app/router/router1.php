@@ -34,6 +34,7 @@ switch ($action) {
  case "centreReadId":
  case "centreReadOne":
  case "centreUpdateStock":
+ case "centreNbreVacciné":
   ControllerCentre::$action();
   break;
   case "patientReadAll" :
@@ -42,6 +43,7 @@ switch ($action) {
   case "patientReadId":
   case "patientCentreDispo":
   case "patientvaccinArecevoir":
+  case "patientVacciné":
   ControllerPatient::$action();
   break;
   case "centreVaccinReadAll" :
